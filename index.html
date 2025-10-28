@@ -413,7 +413,8 @@
                                     <th className="p-3 text-left text-sm font-bold text-gray-600 print:text-gray-900 uppercase tracking-wider">
                                         Item
                                     </th>
-                                    <th className="p-3 text-left text-sm font-bold text-gray-600 print:text-gray-900 uppercase tracking-wider w-[150px]">
+                                    {/* Oculta o cabeçalho "Peso" em telas pequenas (mobile) */}
+                                    <th className="p-3 text-left text-sm font-bold text-gray-600 print:text-gray-900 uppercase tracking-wider w-[150px] hidden sm:table-cell">
                                         Peso (Kg/Un)
                                     </th>
                                 </tr>
@@ -422,13 +423,41 @@
                             <tbody>
                                 {items.map((item) => (
                                     <tr key={item.cod} className="border-b border-gray-200 hover:bg-gray-50 print:hover:bg-white">
+                                        {/* Coluna Cód */}
                                         <td className="p-3 text-gray-700 font-medium print:text-gray-900">
                                             {item.cod}
                                         </td>
+
+                                        {/* Coluna Item (Combina nome e input de peso no mobile) */}
                                         <td className="p-3 text-gray-900">
-                                            {item.name}
+                                            {/* Nome do Item */}
+                                            <span className="font-medium text-gray-900 block">
+                                                {item.name}
+                                            </span>
+
+                                            {/* Bloco de Input de Peso (VISÍVEL SOMENTE NO MOBILE) */}
+                                            <div className="sm:hidden mt-2 pt-2 border-t border-gray-100 print:hidden">
+                                                <label className="text-xs text-gray-500 block mb-1">Peso (Kg/Un)</label>
+                                                <input
+                                                    type="number"
+                                                    step="0.01"
+                                                    value={item.weight}
+                                                    onChange={(e) => handleWeightChange(item.cod, e.target.value)}
+                                                    className="p-2 border border-gray-300 rounded-md w-full"
+                                                    placeholder="0.00"
+                                                />
+                                            </div>
+
+                                            {/* Exibição de peso para Impressão (Aparece nesta coluna no PDF) */}
+                                            <span className="hidden print:block p-2 text-gray-900">
+                                                {item.weight && !isNaN(parseFloat(item.weight))
+                                                    ? parseFloat(item.weight).toFixed(2)
+                                                    : '0.00'}
+                                            </span>
                                         </td>
-                                        <td className="p-3">
+
+                                        {/* Coluna Peso (VISÍVEL SOMENTE NO DESKTOP) */}
+                                        <td className="p-3 hidden sm:table-cell">
                                             <input
                                                 type="number"
                                                 step="0.01"
@@ -437,12 +466,7 @@
                                                 className="p-2 border border-gray-300 rounded-md w-full print:hidden"
                                                 placeholder="0.00"
                                             />
-                                            {/* Lógica de exibição de peso simplificada para impressão */}
-                                            <span className="hidden print:block p-2 text-gray-900">
-                                                {item.weight && !isNaN(parseFloat(item.weight))
-                                                    ? parseFloat(item.weight).toFixed(2)
-                                                    : '0.00'}
-                                            </span>
+                                            {/* O display para print foi movido para a coluna "Item" */}
                                         </td>
                                     </tr>
                                 ))}
