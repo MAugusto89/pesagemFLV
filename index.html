@@ -32,6 +32,15 @@
             .print\:mb-4 {
                 margin-bottom: 1rem;
             }
+            .print\:text-lg {
+                font-size: 1.125rem; /* 18px */
+            }
+            .print\:font-bold {
+                font-weight: 700;
+            }
+            .print\:text-gray-900 {
+                color: #1f2937;
+            }
             /* Garantir que a tabela não quebre */
             .print-table {
                 width: 100%;
@@ -153,7 +162,10 @@
             const [tempName, setTempName] = useState('');
             const [tempWeight, setTempWeight] = useState('');
 
+            /*
             // --- EFEITO PARA LIMPAR APÓS IMPRESSÃO ---
+            // Removido temporariamente. Se o problema for resolvido, a limpeza de estado
+            // estava interferindo na renderização do PDF.
             useEffect(() => {
                 const handleAfterPrint = () => {
                     console.log("Impressão concluída. Resetando o estado...");
@@ -176,6 +188,7 @@
                     window.removeEventListener('afterprint', handleAfterPrint);
                 };
             }, [initialItems]);
+            */
 
             // Função para atualizar o peso de um item
             const handleWeightChange = (cod, newWeight) => {
@@ -371,20 +384,20 @@
                     </form>
 
 
-                    {/* --- SEÇÃO DE ANÁLISE GEMINI --- */}
-                    <div className="my-6 print:hidden">
+                    {/* --- SEÇÃO DE ANÁLISE GEMINI (VISÍVEL NO PDF) --- */}
+                    <div className="my-6 print:mb-4">
                         {error && (
-                            <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+                            <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg print:hidden">
                                 <p className="font-semibold">Erro</p>
                                 <p>{error}</p>
                             </div>
                         )}
                         {analysis && (
-                            <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg shadow-sm">
-                                <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                            <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg shadow-sm print:bg-white print:border-none print:shadow-none">
+                                <h3 className="text-lg font-semibold text-gray-800 mb-2 print:text-lg print:font-bold print:text-gray-900">
                                     Análise Nutricional ✨
                                 </h3>
-                                <p className="text-gray-700 whitespace-pre-wrap">{analysis}</p>
+                                <p className="text-gray-700 whitespace-pre-wrap print:text-gray-900">{analysis}</p>
                             </div>
                         )}
                     </div>
@@ -424,8 +437,11 @@
                                                 className="p-2 border border-gray-300 rounded-md w-full print:hidden"
                                                 placeholder="0.00"
                                             />
+                                            {/* Lógica de exibição de peso simplificada para impressão */}
                                             <span className="hidden print:block p-2 text-gray-900">
-                                                {parseFloat(item.weight) > 0 ? parseFloat(item.weight).toFixed(2) : '0.00'}
+                                                {item.weight && !isNaN(parseFloat(item.weight))
+                                                    ? parseFloat(item.weight).toFixed(2)
+                                                    : '0.00'}
                                             </span>
                                         </td>
                                     </tr>
